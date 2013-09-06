@@ -108,11 +108,7 @@ int dos_style_link PROT((char *, char *));
 #  include <alloca.h>
 #endif
 
-#ifdef INCL_STDARG_H
-#  include <stdarg.h>
-#else
-#  include <varargs.h>
-#endif
+#include <stdarg.h>
 
 #ifdef INCL_BSTRING_H
 #include <bstring.h>
