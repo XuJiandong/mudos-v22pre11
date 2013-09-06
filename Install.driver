@@ -1,0 +1,88 @@
+□ driver
+
+有關 MudOS 的版本：
+早期的 MudOS 是以 0.9.xx.xx 來標明的，自從 0.9.20 以後全面改為 v20.xx
+前面的數字代表 major version，後面的數字代表 minor version，alpha/beta
+版則在後面加上 a 或 b 及版本數字。
+測試版的 driver release 的速度相當的快，大約每一至二星期就
+會有新的版本，所有有關 MudOS driver 的討論，公告事項都可以在 Idea
+Exchange 裡找到 (ie.imaginary.com 7890)。一般來說, alpha 版的 driver 
+都有些新增的功能，而 beta 版則多半是 bug fix，所有新增或修改的相關
+資料都可以在 ChangeLog.* 中查到。driver 的原始程式碼可由 
+ftp.imaginary.com 取得，路徑為 pub/LPC/servers/MudOS。
+
+Compile driver：
+A. options.h
+參考 mudlib release 的 options.h 修改，因為每版 driver 所附的 options.h
+都不相同，所以不要直接 copy 蓋過去，花點時間一項一項比對。該 #define 的
+define，該 #undef 的 undef。 
+
+B. driver 中文化修改：
+適用於 0.9.20.xx 到 v22a22 之間的版本，位置跟檔案大小可能有些差異， 
+不過原理相同。
+註：ES2 mudlib 已知可以在 v21c2，v21.6，v21.7b6，v22a22 等版本之 
+driver 上使用，理論上來說 0.9.20 之前的 driver 不能用來執行 ES2
+mudlib，有關其他 mudlib 的相容性請參考該 mudlib 所附之文件。
+
+1. 在 comm.c 找到以下 function：
+static void telnet_neg P2(char *, to, char *, from)
+{
+  .
+  .
+<省略>
+  .
+  .
+	default:
+	    if (ch & 0x80) {   ──┐將這三行刪掉以後就 driver 就可以
+		continue;          │輸入中文了...
+	    }                  ──┘
+  .
+  .
+<省略>
+}				/* telnet_neg() */
+
+
+2. 在 ed.c 中找到以下 function：
+static void prntln P3(char *, str, int, vflg, int, len)
+{
+  .
+  .
+<省略>
+  .
+  .
+	if (*str < ' ' || *str >= DEL) {
+	   ^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+		改成: ((*str < ' ') && (*str >='\0'))
+	    switch (*str) {
+	    case '\t':
+		/* have to be smart about this or the indentor will fail */
+		*line++ = ' ';
+		while ((line - start) % 8)     <--- 8 改成 4
+  .
+  .
+<省略>
+  .
+  .
+}
+
+C. 執行 build.MudOS (v21 之後, 之前的版本請跳到 D)
+直接執行 build.MudOS，該程式會自動去測試你的系統並幫你設好 makefile。
+執行完畢後跳到 E。
+
+D. 修改 makefile
+如果你用的是比較舊的版本 (如v21c2)，請直接修改 makefile (如果用 gcc, 
+修改 GNUmakefile。註: 如果你是用 linux，因為 linux 的 cc == gcc, 請
+直接改 GNUmakefile)。
+
+E. 執行 make，或是 make install (系統自動安裝)
+compile 好後應該會有個 driver 和 addr_server 的 binary。有關 addr_server
+的功能及用法請參考相關文件。有關 driver 檔的執行也請參考相關文件。
+
+其他：
+如果你在 compile 好 driver 後又修改 driver 程式的任何一部份 (options.h,
+或是其他 .h, .c 檔) 請重新 make. (建議你在 make 之前先執行 make clean,
+把舊的 object 檔清掉)
+
+
+(Elon, 021396)
+(本文如有錯誤或新增資料請來信告知... elon@revelation.cuw.edu)
