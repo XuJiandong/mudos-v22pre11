@@ -1204,7 +1204,7 @@ void regdump P1(regexp *, r)
     register char *nxt;
 
 #ifndef _AIX
-    extern char *strchr();
+//    extern char *strchr();
 
 #endif				/* _AIX */
 
