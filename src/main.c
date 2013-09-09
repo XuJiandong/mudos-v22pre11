@@ -308,8 +308,8 @@ int main P2(int, argc, char **, argv)
 	fprintf(stderr, "Bad mudlib directory: %s\n", mud_lib);
 	exit(-1);
     }
-//    time(&tm);
-//    debug_message("----------------------------------------------------------------------------\n%s (%s) starting up on %s - %s\n\n", MUD_NAME, version_buf, ARCH, ctime(&tm));
+    time(&tm);
+    debug_message("----------------------------------------------------------------------------\n%s (%s) starting up on %s - %s\n\n", MUD_NAME, version_buf, ARCH, ctime(&tm));
 
 #ifdef BINARIES
     init_binaries(argc, argv);
@@ -540,12 +540,12 @@ void debug_message P1V(char *, fmt)
 	perror(deb);
 	abort();
     }
-    V_START(args, fmt);
-    V_VAR(char *, fmt, args);
+    va_start(args, fmt);
     vfprintf(fp, fmt, args);
     fflush(fp);
-    vfprintf(stderr, fmt, args);
-    fflush(stderr);
+// bad stderr, need to double check that
+//    vfprintf(stderr, fmt, args);
+//    fflush(stderr);
     va_end(args);
 
     /*
